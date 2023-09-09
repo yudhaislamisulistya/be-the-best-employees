@@ -4,6 +4,7 @@ import app.libs.database.sub_parameter_employee as sub_parameter_employee_db
 import app.libs.database.employee as employee_db
 import app.libs.database.sub_parameter as sub_parameter_db
 import app.libs.database.sub_parameter_employee as sub_parameter_employee_db
+import app.libs.database.user as user_db
 import app.schemas.batch as schema_batch
 import app.schemas.sub_parameter_employee as schema_sub_parameter_employee
 
@@ -20,21 +21,22 @@ class BatchController:
         # make object from employee and sub_parameter loopoing
         dataEmployees = employee_db.get_employees(db=db, skip=0, limit=1000)
         dataSubParameters = sub_parameter_db.get_sub_parameters(db=db, skip=0, limit=1000)
-        sub_parameter_employees = []
-        for dataEmployee in dataEmployees:
-            for dataSubParameter in dataSubParameters:
-                sub_parameter_employees.append(schema_sub_parameter_employee.SubParameterEmployee(
-                    user_id=2,
-                    sub_parameter_employee_code=batch.batch_code,
-                    employee_code=dataEmployee.employee_code,
-                    sub_parameter_code=dataSubParameter.sub_parameter_code,
-                    value=0
-                ))
-        sub_parameter_employees = [sub_parameter_employee.__dict__ for sub_parameter_employee in sub_parameter_employees]
-        for sub_parameter_employee in sub_parameter_employees:
-            del sub_parameter_employee['sub_parameter_employee_id']
-        print(sub_parameter_employees)
-        sub_parameter_employee_db.bulk_create_sub_parameter_employee(db=db, sub_parameter_employees=sub_parameter_employees)        
+        dataJuries = user_db.get_users_by_two_roles(db=db, role1=2, role2=3, skip=0, limit=1000)
+        for dataJury in dataJuries:
+            sub_parameter_employees = []
+            for dataEmployee in dataEmployees:
+                for dataSubParameter in dataSubParameters:
+                    sub_parameter_employees.append(schema_sub_parameter_employee.SubParameterEmployee(
+                        user_id=dataJury.user_id,
+                        sub_parameter_employee_code=batch.batch_code,
+                        employee_code=dataEmployee.employee_code,
+                        sub_parameter_code=dataSubParameter.sub_parameter_code,
+                        value=0
+                    ))
+            sub_parameter_employees = [sub_parameter_employee.__dict__ for sub_parameter_employee in sub_parameter_employees]
+            for sub_parameter_employee in sub_parameter_employees:
+                del sub_parameter_employee['sub_parameter_employee_id']
+            sub_parameter_employee_db.bulk_create_sub_parameter_employee(db=db, sub_parameter_employees=sub_parameter_employees)        
         return batch_db.create_batch(db=db, batch=batch)
     def update_batch(self, db: Session, batch_id=int, batch=schema_batch.Batch):
         dataBatchById = batch_db.get_batch_by_id(db=db, batch_id=batch_id)

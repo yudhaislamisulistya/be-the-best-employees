@@ -13,6 +13,10 @@ def get_users_by_role(db: Session, role: int, skip: int = 0, limit: int = 1000):
     results = db.query(user_model.User).filter(user_model.User.role == role).offset(skip).limit(limit).all()
     return results
 
+def get_users_by_two_roles(db: Session, role1: int, role2: int, skip: int = 0, limit: int = 1000):
+    results = db.query(user_model.User).filter((user_model.User.role == role1) | (user_model.User.role == role2)).offset(skip).limit(limit).all()
+    return results
+
 def get_user_by_username(db: Session, username: str):
     results = db.query(user_model.User).filter(user_model.User.username == username).first()
     return results
