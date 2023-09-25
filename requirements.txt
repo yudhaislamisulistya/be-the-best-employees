@@ -1,4 +1,5 @@
 fastapi
+hypercorn
 uvicorn[standard]
 alembic
 sqlalchemy
