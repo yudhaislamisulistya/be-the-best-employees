@@ -151,6 +151,7 @@ class SubParameterEmployeeController:
         sorted_leaving_flow = OrderedDict()
         sorted_leaving_flow_string = OrderedDict()
         for employee_code_a in sorted_preference_index_promethee:
+            # nilai 9 harus dinamis berdasarkan jumlah data karyawan
             sorted_leaving_flow[employee_code_a] = round(sum(sorted_preference_index_promethee[employee_code_a].values())/9, 3)
             sorted_leaving_flow_string[employee_code_a] = "{:.3f}".format(sorted_leaving_flow[employee_code_a])
             
