@@ -65,10 +65,10 @@ async def create_grade_sub_parameter(
         "data": results.as_dict_grade_sub_parameter(),
         "detail": {
             "message": "Successfully added grade_sub_parameter",
-            "status_code": status.HTTP_201_CREATED,
+            "status_code": status.HTTP_200_OK,
         },
     }
-    return JSONResponse(content=response_content, status_code=status.HTTP_201_CREATED)
+    return JSONResponse(content=response_content, status_code=status.HTTP_200_OK)
 
 @router.put("/{grade_sub_parameter_id}")
 async def update_grade_sub_parameter(

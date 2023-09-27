@@ -65,10 +65,10 @@ async def create_preference_type(
         "data": results.as_dict_default_preference_type(),
         "detail": {
             "message": "Successfully added preference_type",
-            "status_code": status.HTTP_201_CREATED,
+            "status_code": status.HTTP_200_OK,
         },
     }
-    return JSONResponse(content=response_content, status_code=status.HTTP_201_CREATED)
+    return JSONResponse(content=response_content, status_code=status.HTTP_200_OK)
 
 @router.put("/{preference_type_id}")
 async def update_preference_type(

@@ -95,10 +95,10 @@ async def create_parameter(
         "data": results.as_dict_default_parameter(),
         "detail": {
             "message": "Successfully added parameter",
-            "status_code": status.HTTP_201_CREATED,
+            "status_code": status.HTTP_200_OK,
         },
     }
-    return JSONResponse(content=response_content, status_code=status.HTTP_201_CREATED)
+    return JSONResponse(content=response_content, status_code=status.HTTP_200_OK)
 
 @router.put("/{parameter_id}")
 async def update_parameter(

@@ -64,10 +64,10 @@ async def create_batch(
         "data": results.as_dict_batch(),
         "detail": {
             "message": "Successfully added batch",
-            "status_code": status.HTTP_201_CREATED,
+            "status_code": status.HTTP_200_OK,
         },
     }
-    return JSONResponse(content=response_content, status_code=status.HTTP_201_CREATED)
+    return JSONResponse(content=response_content, status_code=status.HTTP_200_OK)
 
 @router.put("/{batch_id}")
 async def update_batch(

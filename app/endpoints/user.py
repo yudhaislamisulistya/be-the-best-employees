@@ -71,11 +71,11 @@ async def create_user(
         "data": results.as_dict_user(),
         "detail": {
             "message": "Successfully added user",
-            "status_code": status.HTTP_201_CREATED,
+            "status_code": status.HTTP_200_OK,
         },
     }
     
-    return JSONResponse(content=response_content, status_code=status.HTTP_201_CREATED)
+    return JSONResponse(content=response_content, status_code=status.HTTP_200_OK)
 
 @router.put("/{user_id}")
 async def update_user(

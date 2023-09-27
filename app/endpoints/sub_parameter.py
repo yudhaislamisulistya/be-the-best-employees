@@ -70,10 +70,10 @@ async def create_sub_parameter(
         "data": results.as_dict_default_sub_parameter(),
         "detail": {
             "message": "Successfully added sub_parameter",
-            "status_code": status.HTTP_201_CREATED,
+            "status_code": status.HTTP_200_OK,
         },
     }
-    return JSONResponse(content=response_content, status_code=status.HTTP_201_CREATED)
+    return JSONResponse(content=response_content, status_code=status.HTTP_200_OK)
 
 @router.put("/{sub_parameter_id}")
 async def update_sub_parameter(
