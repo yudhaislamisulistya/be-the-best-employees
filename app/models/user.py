@@ -19,3 +19,12 @@ class User(Base):
             "role": self.role,
             "weight": self.weight
         }
+    def as_dict_default_user(self):
+        return {
+            "user_id": self.user_id,
+            "username": self.username,
+            "name": self.name,
+            "position": self.position,
+            "role": self.role,
+            "weight": self.weight
+        }
