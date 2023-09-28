@@ -3,6 +3,8 @@ from fastapi import Request
 import app.libs.database.sub_parameter_employee as sub_parameter_employee_db
 import app.libs.database.parameter as parameter_db
 import app.libs.database.sub_parameter as sub_parameter_db
+import app.libs.database.sub_parameter as sub_parameter_db
+import app.libs.database.employee as employee_db
 import app.schemas.sub_parameter_employee as schema_sub_parameter_employee
 from collections import defaultdict, OrderedDict
 from natsort import natsorted
@@ -176,7 +178,10 @@ class SubParameterEmployeeController:
             
         ranking_by_sorted_net_flow = natsorted(sorted_net_flow.items(), key=lambda k: k[1], reverse=True)
         ranking_by_sorted_net_flow = [(i+1, employee_code, net_flow) for i, (employee_code, net_flow) in enumerate(ranking_by_sorted_net_flow)]
-        
+        # add name from employee_code
+        # employees = employee_db.get_employee_by_code(db=db, code=uniqueEmployeeCode)
+        ranking_by_sorted_net_flow = [(rank, employee_code, net_flow, employee_db.get_employee_by_code(db=db, code=employee_code).name) for rank, employee_code, net_flow in ranking_by_sorted_net_flow]
+
         final_results = {
             "data": results,
             "preference_index_promethee": sorted_preference_index_promethee,

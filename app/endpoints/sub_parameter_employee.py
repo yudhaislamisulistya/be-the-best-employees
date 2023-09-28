@@ -78,10 +78,10 @@ async def create_sub_parameter_employee(
         "data": results.as_dict_default_sub_parameter_employee(),
         "detail": {
             "message": "Successfully added sub_parameter_employee",
-            "status_code": status.HTTP_200_OK,
+            "status_code": status.HTTP_201_CREATED,
         },
     }
-    return JSONResponse(content=response_content, status_code=status.HTTP_200_OK)
+    return JSONResponse(content=response_content, status_code=status.HTTP_201_CREATED)
 
 @router.post("/batch")
 async def create_sub_parameter_employee_batch(
@@ -95,10 +95,10 @@ async def create_sub_parameter_employee_batch(
         "data": results,
         "detail": {
             "message": "Successfully added sub_parameter_employee",
-            "status_code": status.HTTP_200_OK,
+            "status_code": status.HTTP_201_CREATED,
         },
     }
-    return JSONResponse(content=response_content, status_code=status.HTTP_200_OK)
+    return JSONResponse(content=response_content, status_code=status.HTTP_201_CREATED)
 
 @router.put("/batch")
 async def create_sub_parameter_employee_batch(
@@ -112,10 +112,10 @@ async def create_sub_parameter_employee_batch(
         "data": results,
         "detail": {
             "message": "Successfully updated sub_parameter_employee",
-            "status_code": status.HTTP_200_OK,
+            "status_code": status.HTTP_201_CREATED,
         },
     }
-    return JSONResponse(content=response_content, status_code=status.HTTP_200_OK)
+    return JSONResponse(content=response_content, status_code=status.HTTP_201_CREATED)
 
 @router.put("/{sub_parameter_employee_id}")
 async def update_sub_parameter_employee(

@@ -64,10 +64,10 @@ async def create_employee(
         "data": results.as_dict_employee(),
         "detail": {
             "message": "Successfully added employee",
-            "status_code": status.HTTP_200_OK,
+            "status_code": status.HTTP_201_CREATED,
         },
     }
-    return JSONResponse(content=response_content, status_code=status.HTTP_200_OK)
+    return JSONResponse(content=response_content, status_code=status.HTTP_201_CREATED)
 
 @router.put("/{employee_id}")
 async def update_employee(
