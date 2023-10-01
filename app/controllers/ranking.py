@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session
 from fastapi import Request
 import app.libs.database.ranking as ranking_db
 import app.libs.database.user as user_db
+import app.libs.database.employee as employee_db
 import app.schemas.ranking as schema_ranking
 from natsort import natsorted
 
@@ -73,31 +74,10 @@ class RankingController:
                         "score_lose": 0,
                     })
 
-                        
-        
-        # for pc in pairwise_contest:
-        #     # mencari ranking untuk employee_code dan employee_code_vs
-        #     ranking_ec = next((r.ranking for r in results if r.employee_code == pc['employee_code']), None)
-        #     ranking_ec_vs = next((r.ranking for r in results if r.employee_code == pc['employee_code_vs']), None)
-        #     print("Ini Adalah, ", ranking_ec)
-        #     print("Ini Adalah VS, ", ranking_ec_vs)
-        #     # membandingkan ranking
-        #     if ranking_ec is not None and ranking_ec_vs is not None:
-        #         if ranking_ec < ranking_ec_vs:  # ranking lebih rendah berarti lebih baik
-        #             print(ranking_ec, " < ", ranking_ec_vs)
-        #             pc['user_id_win'] = [r.user_id for r in results if r.employee_code == pc['employee_code']]
-        #             pc['user_id_lose'] = [r.user_id for r in results if r.employee_code == pc['employee_code_vs']]
-        #         elif ranking_ec > ranking_ec_vs:
-        #             print(ranking_ec, " > ", ranking_ec_vs)
-        #             pc['user_id_win'] = [r.user_id for r in results if r.employee_code == pc['employee_code_vs']]
-        #             pc['user_id_lose'] = [r.user_id for r in results if r.employee_code == pc['employee_code']]
-        # print(pairwise_contest)
         for pc in pairwise_contest:
             # mencari ranking untuk employee_code dan employee_code_vs
             ranking_ec = [r.ranking for r in results if r.employee_code == pc['employee_code']]
             ranking_ec_vs = [r.ranking for r in results if r.employee_code == pc['employee_code_vs']]
-
-            
             print("Ini Adalah, ", ranking_ec, " VS ", ranking_ec_vs)
             
             # len uniqueUserId
@@ -134,19 +114,67 @@ class RankingController:
                 pc['string_score_lose'] = ', '.join(pc['string_score_lose'])
                 pc['score_lose'] = [int(uniqueUser[i].weight) for i in range(len_uniqueUserId) if uniqueUserId[i] in pc['user_id_win']]
                 pc['score_lose'] = sum(pc['score_lose'])
-
-
-
-            
-        print(pairwise_contest)                    
-
                 
+        total_win_employee_code_to_employee_code_vs = []
+        for ec1 in uniqueEmployeeCode:
+            for ec2 in uniqueEmployeeCode:
+                total_win_employee_code_to_employee_code_vs.append({
+                    "employee_code": ec1,
+                    "employee_code_vs": ec2,
+                    "total_win": 0,
+                    "total_lose": 0,
+                })
+        
+        for pc in pairwise_contest:
+            for i in range(len(total_win_employee_code_to_employee_code_vs)):
+                if total_win_employee_code_to_employee_code_vs[i]['employee_code'] == pc['employee_code'] and total_win_employee_code_to_employee_code_vs[i]['employee_code_vs'] == pc['employee_code_vs']:
+                    total_win_employee_code_to_employee_code_vs[i]['total_win'] += len(pc['user_id_win'])
+                if total_win_employee_code_to_employee_code_vs[i]['employee_code'] == pc['employee_code_vs'] and total_win_employee_code_to_employee_code_vs[i]['employee_code_vs'] == pc['employee_code']:
+                    total_win_employee_code_to_employee_code_vs[i]['total_lose'] += len(pc['user_id_win'])
+
+        
+        # Initialize a list to store total wins, total score, and string score for each employee
+        total_win_lose_pairwise_contest = []
+
+        for ec in uniqueEmployeeCode:
+            total_win_lose_pairwise_contest.append({
+                "employee_code": ec,
+                "name_employee": "",
+                "total_win": 0,
+                "total_lose": 0,
+                "difference": 0,
+                "rank": 0,
+            })
+            
+        for i in range(len(uniqueEmployeeCode)):
+            total_win_lose_pairwise_contest[i]['name_employee'] = employee_db.get_employee_by_code(db=db, code=uniqueEmployeeCode[i]).name
+            
+        for pc in pairwise_contest:
+            index = [i for i in range(len(total_win_lose_pairwise_contest)) if total_win_lose_pairwise_contest[i]['employee_code'] == pc['win']]
+            total_win_lose_pairwise_contest[index[0]]['total_win'] += 1
+            index = [i for i in range(len(total_win_lose_pairwise_contest)) if total_win_lose_pairwise_contest[i]['employee_code'] == pc['lose']]
+            total_win_lose_pairwise_contest[index[0]]['total_lose'] += 1
+            
+        for i in range(len(total_win_lose_pairwise_contest)):
+            total_win_lose_pairwise_contest[i]['total_win'] /= 2
+            total_win_lose_pairwise_contest[i]['total_lose'] /= 2
+            
+        for i in range(len(total_win_lose_pairwise_contest)):
+            total_win_lose_pairwise_contest[i]['difference'] = total_win_lose_pairwise_contest[i]['total_win'] - total_win_lose_pairwise_contest[i]['total_lose']
+        
+        # sort by total_win_lose_pairwise_contest difference
+        total_win_lose_pairwise_contest = sorted(total_win_lose_pairwise_contest, key=lambda x: x['difference'], reverse=True)
+        
+        for i in range(len(total_win_lose_pairwise_contest)):
+            total_win_lose_pairwise_contest[i]['rank'] = i + 1
         
         final_result = {
             "results": [ranking.as_dict_default_ranking() for ranking in results],
             "unique_employee_code": uniqueEmployeeCode,
             "unique_user": [user.as_dict_default_user() for user in uniqueUser],
-            "pairwise_contest": pairwise_contest
+            "pairwise_contest": pairwise_contest,
+            "total_win_lose_pairwise_contest": total_win_lose_pairwise_contest,
+            "total_win_employee_code_to_employee_code_vs": total_win_employee_code_to_employee_code_vs
         }
         return final_result
         
