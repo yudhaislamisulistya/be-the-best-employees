@@ -28,19 +28,27 @@ def bulk_create_ranking(db: Session, rankings: list):
     db.commit()
     return rankings
 
-def bulk_create_or_update_ranking(db: Session, rankings: list):
-    upsert_stmt = insert(ranking_model.Ranking).values(rankings)
-    upsert_stmt = upsert_stmt.on_conflict_do_update(
-        index_elements=[ranking_model.Ranking.ranking_id],
-        set_={
-            "user_id": upsert_stmt.excluded.user_id,
-            "batch_code": upsert_stmt.excluded.batch_code,
-            "employee_code": upsert_stmt.excluded.employee_code,
-            "name": upsert_stmt.excluded.name,
-            "net_flow": upsert_stmt.excluded.net_flow,
-            "ranking": upsert_stmt.excluded.ranking
-        }
-    )
+def bulk_update_ranking(db: Session, rankings: list):
+    for ranking in rankings:
+        print(ranking["batch_code"])
+        print(ranking["user_id"])
+        print(ranking["employee_code"])
+        db_ranking = db.query(ranking_model.Ranking).filter(
+            ranking_model.Ranking.batch_code == ranking["batch_code"], 
+            ranking_model.Ranking.user_id == ranking["user_id"], 
+            ranking_model.Ranking.employee_code == ranking["employee_code"]
+        ).first()
+        
+        if db_ranking is None:
+            print(f"No matching row found for batch_code={ranking['batch_code']}, user_id={ranking['user_id']}, employee_code={ranking['employee_code']}")
+            continue
+
+        db_ranking.net_flow = ranking["net_flow"]
+        db_ranking.ranking = ranking["ranking"]
+        db.commit()
+        db.refresh(db_ranking)
+    return rankings
+
 
 def update_ranking_by_id(db: Session, ranking_id: int, ranking: ranking_model.Ranking):
     db_ranking = db.query(ranking_model.Ranking).filter(ranking_model.Ranking.ranking_id == ranking_id).first()

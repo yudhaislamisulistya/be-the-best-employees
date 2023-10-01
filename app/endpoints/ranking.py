@@ -81,7 +81,7 @@ async def create_ranking(
     return JSONResponse(content=response_content, status_code=status.HTTP_200_OK)
 
 @router.post("/bulk")
-async def bulk_create_or_update_ranking(
+async def bulk_update_ranking(
     request: Request,
     db: Session = Depends(get_db)
 ):
@@ -89,10 +89,11 @@ async def bulk_create_or_update_ranking(
     top_ranking = rankings[0]
     top_rangking_by_batch_code_and_user_id = ranking_controller.get_ranking_by_batch_code_and_user_id(db=db, batch_code=top_ranking["batch_code"], user_id=top_ranking["user_id"])
     
+    print(top_rangking_by_batch_code_and_user_id)
     if top_rangking_by_batch_code_and_user_id == 404:
         results = ranking_controller.bulk_create_ranking(db=db, data=rankings)
     else:
-        results = ranking_controller.bulk_create_or_update_ranking(db=db, data=rankings)
+        results = ranking_controller.bulk_update_ranking(db=db, data=rankings)
     
     response_content = {
         "data": results,

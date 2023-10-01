@@ -32,8 +32,9 @@ class RankingController:
     def bulk_create_ranking(self, db: Session, data: Request):
         ranking_db.bulk_create_ranking(db=db, rankings=data)
         return 200
-    def bulk_create_or_update_ranking(self, db: Session, data: Request):
-        ranking_db.bulk_create_or_update_ranking(db=db, rankings=data)
+    def bulk_update_ranking(self, db: Session, data: Request):
+        print("Masuk Ke Bagian Bu")
+        ranking_db.bulk_update_ranking(db=db, rankings=data)
         return 200
     def get_ranking_by_batch_code_and_user_id(self, db: Session, batch_code: str, user_id: int):
         data = ranking_db.get_ranking_by_batch_code_and_user_id(db=db, batch_code=batch_code, user_id=user_id)
@@ -53,7 +54,7 @@ class RankingController:
         uniqueUserId = natsorted(uniqueUserId)
         uniqueUser = [user_db.get_user_by_id(db=db, user_id=userId) for userId in uniqueUserId]
         uniqueUser = [user for user in uniqueUser if user]
-        results = natsorted(results, key=lambda x: x.user_id)
+        results = natsorted(results, key=lambda x: (x.user_id, x.ranking))
 
         pairwise_contest = []
         # tabel pairwise contest

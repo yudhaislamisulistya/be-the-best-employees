@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float
+from sqlalchemy import Column, Integer, String, Float, UniqueConstraint
 from app.config.database import Base
 
 class Ranking(Base):
