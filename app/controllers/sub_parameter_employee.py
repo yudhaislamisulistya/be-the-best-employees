@@ -154,7 +154,7 @@ class SubParameterEmployeeController:
         sorted_leaving_flow_string = OrderedDict()
         for employee_code_a in sorted_preference_index_promethee:
             # nilai 9 harus dinamis berdasarkan jumlah data karyawan
-            sorted_leaving_flow[employee_code_a] = round(sum(sorted_preference_index_promethee[employee_code_a].values())/9, 3)
+            sorted_leaving_flow[employee_code_a] = round(sum(sorted_preference_index_promethee[employee_code_a].values())/len(uniqueEmployeeCode), 3)
             sorted_leaving_flow_string[employee_code_a] = "{:.3f}".format(sorted_leaving_flow[employee_code_a])
             
         # entering flow menjumlahkan perkolom employee_code_b
@@ -167,7 +167,7 @@ class SubParameterEmployeeController:
         sorted_entering_flow = OrderedDict()
         sorted_entering_flow_string = OrderedDict()
         for employee_code_b in columns_preference_index_promethee:
-            sorted_entering_flow[employee_code_b] = round(sum(columns_preference_index_promethee[employee_code_b].values())/9, 3)
+            sorted_entering_flow[employee_code_b] = round(sum(columns_preference_index_promethee[employee_code_b].values())/len(uniqueEmployeeCode), 3)
             sorted_entering_flow_string[employee_code_b] = "{:.3f}".format(sorted_entering_flow[employee_code_b])
             
         sorted_net_flow = OrderedDict()

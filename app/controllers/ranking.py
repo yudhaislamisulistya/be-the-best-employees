@@ -44,8 +44,8 @@ class RankingController:
     def get_rankings_by_batch_code(self, db: Session, batch_code: str, skip: int = 0, limit: int = 1000):
         rankings = ranking_db.get_rankings_by_batch_code(db=db, batch_code=batch_code, skip=skip, limit=limit)
         return rankings or []
-    def get_rankings_copeland(self, db: Session, skip: int = 0, limit: int = 1000):
-        results = ranking_db.get_rankings(db=db, skip=skip, limit=limit)
+    def get_rankings_copeland(self, db: Session, skip: int = 0, limit: int = 1000, batch_code: str = None):
+        results = ranking_db.get_rankings(db=db, skip=skip, limit=limit, batch_code=batch_code)
         uniqueEmployeeCode = [result.employee_code for result in results]
         uniqueEmployeeCode = list(dict.fromkeys(uniqueEmployeeCode))
         uniqueEmployeeCode = natsorted(uniqueEmployeeCode)
@@ -147,6 +147,9 @@ class RankingController:
                 "rank": 0,
             })
             
+        print(pairwise_contest)
+        print(uniqueEmployeeCode)
+            
         for i in range(len(uniqueEmployeeCode)):
             total_win_lose_pairwise_contest[i]['name_employee'] = employee_db.get_employee_by_code(db=db, code=uniqueEmployeeCode[i]).name
             
@@ -165,6 +168,7 @@ class RankingController:
         
         # sort by total_win_lose_pairwise_contest difference
         total_win_lose_pairwise_contest = sorted(total_win_lose_pairwise_contest, key=lambda x: x['difference'], reverse=True)
+        print(total_win_lose_pairwise_contest)
         
         for i in range(len(total_win_lose_pairwise_contest)):
             total_win_lose_pairwise_contest[i]['rank'] = i + 1

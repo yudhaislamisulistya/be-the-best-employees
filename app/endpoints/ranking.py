@@ -47,14 +47,15 @@ async def read_rankings(
     }
     return JSONResponse(content=response_content, status_code=status.HTTP_200_OK)
 
-@router.get("/copeland")
+@router.get("/copeland/{batch_code}")
 async def read_rankings_copeland(
     db: Session = Depends(get_db),
     skip: int = 0,
     limit: int = 1000,
+    batch_code: str = None,
     response: Response = None,
 ):
-    results = ranking_controller.get_rankings_copeland(db=db, skip=skip, limit=limit)
+    results = ranking_controller.get_rankings_copeland(db=db, skip=skip, limit=limit, batch_code=batch_code)
     return JSONResponse(content=results, status_code=status.HTTP_200_OK)
 
 @router.post("/")

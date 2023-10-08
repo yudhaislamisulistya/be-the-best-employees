@@ -5,8 +5,8 @@ from sqlalchemy.dialects.postgresql import insert
 def get_ranking_by_id(db: Session, ranking_id: int):
     return db.query(ranking_model.Ranking).filter(ranking_model.Ranking.ranking_id == ranking_id).first()
 
-def get_rankings(db: Session, skip: int = 0, limit: int = 1000):
-    results = db.query(ranking_model.Ranking).order_by(ranking_model.Ranking.ranking_id.asc()).offset(skip).limit(limit).all()
+def get_rankings(db: Session, skip: int = 0, limit: int = 1000, batch_code: str = None):
+    results = db.query(ranking_model.Ranking).filter(ranking_model.Ranking.batch_code == batch_code).order_by(ranking_model.Ranking.ranking_id.asc()).offset(skip).limit(limit).all()
     return results
 
 def create_ranking(db: Session, ranking: ranking_model.Ranking):
